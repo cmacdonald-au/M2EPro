@@ -443,6 +443,63 @@ CommonAmazonAccountHandler.prototype = Object.extend(new CommonHandler(), {
         }
     },
 
+    // Repricing Integration
+    // ---------------------------------------
+
+    linkOrRegisterRepricing: function()
+    {
+        return setLocation(M2ePro.url.get('adminhtml_common_amazon_account_repricing/linkOrRegister'));
+    },
+
+    unlinkRepricing: function()
+    {
+        if (!confirm(M2ePro.translator.translate('Are you sure?'))) {
+            return;
+        }
+
+        AmazonAccountHandlerObj.openUnlinkPage();
+    },
+
+    openUnlinkPage: function()
+    {
+        return setLocation(M2ePro.url.get('adminhtml_common_amazon_account_repricing/openUnlinkPage'));
+    },
+
+    openManagement: function()
+    {
+        window.open(M2ePro.url.get('adminhtml_common_amazon_account_repricing/openManagement'));
+    },
+
+    synchRepricing: function()
+    {
+        var self = this;
+
+        new Ajax.Request(M2ePro.url.get('adminhtml_common_amazon_account_repricing/synchronize'), {
+            method: 'post',
+            onSuccess: function (transport) {
+
+                if (!transport.responseText.isJSON()) {
+                    alert(transport.responseText);
+                    return;
+                }
+
+                var response = transport.responseText.evalJSON();
+
+                if (response.messages) {
+                    MagentoMessageObj.clearAll();
+                    response.messages.each(function(msg) {
+                        MagentoMessageObj['add' + msg.type[0].toUpperCase() + msg.type.slice(1)](msg.text);
+                    });
+
+                    return;
+                }
+
+                $('repricing_total_products').innerHTML = response['repricing_total_products'];
+                $('m2epro_repricing_total_products').innerHTML = response['m2epro_repricing_total_products'];
+            }
+        });
+    },
+
     // ---------------------------------------
 
     saveAndClose: function()

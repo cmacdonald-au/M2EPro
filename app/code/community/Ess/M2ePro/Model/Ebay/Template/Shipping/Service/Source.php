@@ -115,28 +115,6 @@ class Ess_M2ePro_Model_Ebay_Template_Shipping_Service_Source
     /**
      * @return float
      */
-    public function getCostPercentageLift()
-    {
-        $result = 0;
-
-        switch ($this->getShippingServiceTemplate()->getCostMode()) {
-            case Ess_M2ePro_Model_Ebay_Template_Shipping_Service::COST_MODE_FREE:
-                $result = 0;
-                break;
-            case Ess_M2ePro_Model_Ebay_Template_Shipping_Service::COST_MODE_CUSTOM_VALUE:
-            case Ess_M2ePro_Model_Ebay_Template_Shipping_Service::COST_MODE_CUSTOM_ATTRIBUTE:
-                $result = $this->getShippingServiceTemplate()->getCostPercentageLift();
-                break;
-        }
-
-        is_string($result) && $result = str_replace(',','.',$result);
-
-        return round((float)$result,2);
-    }
-
-    /**
-     * @return float
-     */
     public function getCostSurcharge()
     {
         $result = 0;

@@ -79,10 +79,8 @@ class Ess_M2ePro_Model_Amazon_Listing_Product_Action_Request_Details
 
         $data = array_merge($data, $this->getDescriptionData());
 
-        $data['number_of_items'] = $this->getAmazonListingProduct()
-                                        ->getDescriptionTemplateSource()->getNumberOfItems();
-        $data['item_package_quantity'] = $this->getAmazonListingProduct()
-                                              ->getDescriptionTemplateSource()->getItemPackageQuantity();
+        $data['number_of_items']       = $this->getDefinitionSource()->getNumberOfItems();
+        $data['item_package_quantity'] = $this->getDefinitionSource()->getItemPackageQuantity();
 
         $browsenodeId = $this->getDescriptionTemplate()->getBrowsenodeId();
         if (empty($browsenodeId)) {
@@ -277,12 +275,14 @@ class Ess_M2ePro_Model_Amazon_Listing_Product_Action_Request_Details
 
         foreach ($this->getDescriptionTemplate()->getSpecifics(true) as $specific) {
 
-            $path = $specific->getSource(
-                $this->getAmazonListingProduct()->getActualMagentoProduct()
-            )->getPath();
+            $source = $specific->getSource($this->getAmazonListingProduct()->getActualMagentoProduct());
+
+            if (!$specific->isRequired() && !$specific->isModeNone() && !$source->getValue()) {
+                continue;
+            }
 
             $data = Mage::helper('M2ePro')->arrayReplaceRecursive(
-                $data, json_decode($path, true)
+                $data, json_decode($source->getPath(), true)
             );
         }
 

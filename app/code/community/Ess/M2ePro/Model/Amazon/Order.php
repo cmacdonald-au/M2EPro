@@ -109,6 +109,42 @@ class Ess_M2ePro_Model_Amazon_Order extends Ess_M2ePro_Model_Component_Child_Ama
     }
 
     /**
+     * @return array
+     */
+    public function getMerchantFulfillmentData()
+    {
+        return $this->getSettings('merchant_fulfillment_data');
+    }
+
+    //########################################
+
+    public function getShipDateFrom()
+    {
+        $shippingDates = $this->getSettings('shipping_dates');
+        return !empty($shippingDates['ship']['from']) ? $shippingDates['ship']['from'] : NULL;
+    }
+
+    public function getShipDateTo()
+    {
+        $shippingDates = $this->getSettings('shipping_dates');
+        return !empty($shippingDates['ship']['to']) ? $shippingDates['ship']['to'] : NULL;
+    }
+
+    public function getDeliveryDateFrom()
+    {
+        $shippingDates = $this->getSettings('shipping_dates');
+        return !empty($shippingDates['delivery']['from']) ? $shippingDates['delivery']['from'] : NULL;
+    }
+
+    public function getDeliveryDateTo()
+    {
+        $shippingDates = $this->getSettings('shipping_dates');
+        return !empty($shippingDates['delivery']['to']) ? $shippingDates['delivery']['to'] : NULL;
+    }
+
+    //########################################
+
+    /**
      * @return float
      */
     public function getPaidAmount()
@@ -221,6 +257,46 @@ class Ess_M2ePro_Model_Amazon_Order extends Ess_M2ePro_Model_Component_Child_Ama
     public function isFulfilledByAmazon()
     {
         return (bool)$this->getData('is_afn_channel');
+    }
+
+    //########################################
+
+    public function isEligibleForMerchantFulfillment()
+    {
+        if ($this->isFulfilledByAmazon()) {
+            return false;
+        }
+
+        if ($this->isPending() || $this->isCanceled()) {
+            return false;
+        }
+
+        /** @var Ess_M2ePro_Model_Amazon_Marketplace $amazonMarketplace */
+        $amazonMarketplace = $this->getAmazonAccount()->getMarketplace()->getChildObject();
+        if (!$amazonMarketplace->isMerchantFulfillmentAvailable()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMerchantFulfillmentApplied()
+    {
+        $info = $this->getMerchantFulfillmentData();
+        return !empty($info);
+    }
+
+    //########################################
+
+    /**
+     * @return bool
+     */
+    public function isPrime()
+    {
+        return (bool)$this->getData('is_prime');
     }
 
     //########################################

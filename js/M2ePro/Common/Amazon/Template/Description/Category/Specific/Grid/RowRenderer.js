@@ -333,7 +333,7 @@ CommonAmazonTemplateDescriptionCategorySpecificGridRowRenderer = Class.create(Co
 
         select.observe('change', this.onChangeValue.bind(this));
 
-        var handlerObj = window['AttributeCreator_' + select.id + '_Obj'] = new AttributeCreator();
+        var handlerObj = new AttributeCreator(select.id);
         handlerObj.setSelectObj(select);
         handlerObj.injectAddOption();
 
@@ -367,6 +367,7 @@ CommonAmazonTemplateDescriptionCategorySpecificGridRowRenderer = Class.create(Co
 
         selectedObj['mode'] = event.target.getAttribute('mode');
         selectedObj['type'] = event.target.getAttribute('specific_type');
+        selectedObj['is_required'] = (this.dictionaryHelper.isSpecificRequired(this.specific) || this.isValueForceSet()) ? 1 : 0;
         selectedObj[selectedObj.mode] = event.target.value;
 
         this.specificHandler.markSpecificAsSelected(this.indexedXPath, selectedObj);

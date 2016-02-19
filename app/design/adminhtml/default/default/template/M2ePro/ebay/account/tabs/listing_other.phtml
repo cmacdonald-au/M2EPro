@@ -48,7 +48,7 @@
     <?php echo Mage::helper('M2ePro')->__(
         'Edit the Import, Mapping and Synchronization Settings for <b>3rd Party Listings</b> here.<br/>
         3rd Party Listings are Items that have been Listed on eBay either directly or with a tool other than M2E Pro.<br/><br/>
-        <b>Note:</b> Settings made here only take effect if <b>3rd Party Listings Synchronization</b> is enabled in %menu_path%.</br></br>
+        <b>Note:</b> Settings made here only take effect if <b>3rd Party Listings Synchronization</b> is enabled in %menu_path%.<br/><br/>
         More detailed information about ability to work with this Page you can find <a href="%url%" target="_blank">here</a>.',
         Mage::helper('M2ePro/View_Ebay')->getPageNavigationPath('configuration', 'Synchronization'),
         Mage::helper('M2ePro/Module_Support')->getDocumentationUrl(NULL, NULL, 'x/LQAJAQ')); ?>
@@ -139,7 +139,7 @@
                                     <option attribute_code="<?php echo $attribute['code']; ?>"
                                             value="<?php echo Ess_M2ePro_Model_Ebay_Account::OTHER_LISTINGS_MAPPING_SKU_MODE_CUSTOM_ATTRIBUTE; ?>"
                                         <?php if (isset($mappingSettings['sku']['mode']) && $mappingSettings['sku']['mode'] == Ess_M2ePro_Model_Ebay_Account::OTHER_LISTINGS_MAPPING_SKU_MODE_CUSTOM_ATTRIBUTE && $tempAttributeValue == $attribute['code']) : echo 'selected="selected"'; endif; ?>>
-                                        <?php echo Mage::helper('M2ePro')->__($attribute['label']) ?>
+                                        <?php echo Mage::helper('M2ePro')->escapeHtml($attribute['label']); ?>
                                     </option>
                                 <?php endforeach; ?>
                             </optgroup>
@@ -175,7 +175,7 @@
                                     <option attribute_code="<?php echo $attribute['code']; ?>"
                                             value="<?php echo Ess_M2ePro_Model_Ebay_Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_CUSTOM_ATTRIBUTE; ?>"
                                         <?php if (isset($mappingSettings['title']['mode']) && $mappingSettings['title']['mode'] == Ess_M2ePro_Model_Ebay_Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_CUSTOM_ATTRIBUTE && $tempAttributeValue == $attribute['code']) : echo 'selected="selected"'; endif; ?>>
-                                        <?php echo Mage::helper('M2ePro')->__($attribute['label']) ?>
+                                        <?php echo Mage::helper('M2ePro')->escapeHtml($attribute['label']); ?>
                                     </option>
                                 <?php endforeach; ?>
                             </optgroup>

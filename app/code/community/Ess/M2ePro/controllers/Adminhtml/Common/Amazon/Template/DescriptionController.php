@@ -116,15 +116,7 @@ class Ess_M2ePro_Adminhtml_Common_Amazon_Template_DescriptionController
             'registered_parameter',
 
             'worldwide_id_mode',
-            'worldwide_id_custom_attribute',
-
-            'item_package_quantity_mode',
-            'item_package_quantity_custom_value',
-            'item_package_quantity_custom_attribute',
-
-            'number_of_items_mode',
-            'number_of_items_custom_value',
-            'number_of_items_custom_attribute'
+            'worldwide_id_custom_attribute'
         );
 
         $dataForAdd = array();
@@ -164,6 +156,14 @@ class Ess_M2ePro_Adminhtml_Common_Amazon_Template_DescriptionController
             'manufacturer_part_number_mode',
             'manufacturer_part_number_custom_value',
             'manufacturer_part_number_custom_attribute',
+
+            'item_package_quantity_mode',
+            'item_package_quantity_custom_value',
+            'item_package_quantity_custom_attribute',
+
+            'number_of_items_mode',
+            'number_of_items_custom_value',
+            'number_of_items_custom_attribute',
 
             'item_dimensions_volume_mode',
             'item_dimensions_volume_length_custom_value',
@@ -271,6 +271,7 @@ class Ess_M2ePro_Adminhtml_Common_Amazon_Template_DescriptionController
             $specificInstance = Mage::getModel('M2ePro/Amazon_Template_Description_Specific');
 
             $type       = isset($specificData['type']) ? $specificData['type'] : '';
+            $isRequired = isset($specificData['is_required']) ? $specificData['is_required'] : 0;
             $attributes = isset($specificData['attributes']) ? json_encode($specificData['attributes']) : '[]';
 
             $recommendedValue = $specificData['mode'] == $specificInstance::DICTIONARY_MODE_RECOMMENDED_VALUE
@@ -286,6 +287,7 @@ class Ess_M2ePro_Adminhtml_Common_Amazon_Template_DescriptionController
                 'template_description_id' => $id,
                 'xpath'                   => $xpath,
                 'mode'                    => $specificData['mode'],
+                'is_required'             => $isRequired,
                 'recommended_value'       => $recommendedValue,
                 'custom_value'            => $customValue,
                 'custom_attribute'        => $customAttribute,
