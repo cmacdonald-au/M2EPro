@@ -1,0 +1,16 @@
+code/app/code/community/Ess/M2ePro                       app/code/community/Ess/M2ePro
+code/app/design/adminhtml/default/default/layout/*       app/design/adminhtml/default/default/layout/
+code/app/design/adminhtml/default/default/template/M2ePro     app/design/adminhtml/default/default/template/M2ePro
+code/app/etc/modules/*                                   app/etc/modules/
+code/app/locale/en_GB/*                                  app/locale/en_GB/
+code/app/locale/de_DE/*                                  app/locale/de_DE/
+code/app/locale/de_AT/*                                  app/locale/de_AT/
+code/app/locale/de_CH/*                                  app/locale/de_CH/
+code/app/locale/es_ES/*                                  app/locale/es_ES/
+code/app/locale/fr_CA/*                                  app/locale/fr_CA/
+code/app/locale/fr_FR/*                                  app/locale/fr_FR/
+code/app/locale/it_CH/*                                  app/locale/it_CH/
+code/app/locale/it_IT/*                                  app/locale/it_IT/
+code/js/M2ePro                                           js/M2ePro
+code/skin/adminhtml/default/default/M2ePro               skin/adminhtml/default/default/M2ePro
+code/skin/adminhtml/default/enterprise/M2ePro            skin/adminhtml/default/enterprise/M2ePro
