@@ -186,6 +186,11 @@ class Ess_M2ePro_Model_Ebay_Template_Shipping_Service extends Ess_M2ePro_Model_C
 
     //########################################
 
+    public function getCostPercentageLiftValue()
+    {
+        return $this->getData('cost_percentage_lift');
+    }
+
     public function getCostValue()
     {
         return $this->getData('cost_value');

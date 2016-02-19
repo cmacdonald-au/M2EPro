@@ -259,6 +259,10 @@ class Ess_M2ePro_Model_Ebay_Template_Shipping_Builder
             unset($data['shipping_cost_value']['%i%']);
         }
 
+        if (isset($data['shipping_cost_percentage_lift']['%i%'])) {
+            unset($data['shipping_cost_percentage_lift']['%i%']);
+        }
+
         if (isset($data['shipping_cost_surcharge_value']['%i%'])) {
             unset($data['shipping_cost_surcharge_value']['%i%']);
         }
@@ -328,6 +332,7 @@ class Ess_M2ePro_Model_Ebay_Template_Shipping_Builder
                 'shipping_type'         => $shippingType,
                 'cost_additional_value' => $costAdditional,
                 'cost_surcharge_value'  => $costSurcharge,
+                'cost_percentage_lift'  => $data['shipping_cost_percentage_lift'][$i],
                 'priority'              => $data['shipping_priority'][$i],
                 'locations'             => json_encode($locations)
             );

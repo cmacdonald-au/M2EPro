@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
     <name>m2epro_ebay_magento</name>
-    <version>6.3.7</version>
+    <version>6.3.7.1</version>
     <stability>stable</stability>
     <license uri="http://www.m2epro.com/terms/">Terms Of Service</license>
     <channel>community</channel>
