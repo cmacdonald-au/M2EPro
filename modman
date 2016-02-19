@@ -14,3 +14,4 @@ code/app/locale/it_IT/*                                  app/locale/it_IT/
 code/js/M2ePro                                           js/M2ePro
 code/skin/adminhtml/default/default/M2ePro               skin/adminhtml/default/default/M2ePro
 code/skin/adminhtml/default/enterprise/M2ePro            skin/adminhtml/default/enterprise/M2ePro
+package.xml                                              var/package/m2epro.xml
