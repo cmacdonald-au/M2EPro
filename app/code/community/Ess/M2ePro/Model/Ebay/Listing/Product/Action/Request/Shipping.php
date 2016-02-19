@@ -246,6 +246,12 @@ class Ess_M2ePro_Model_Ebay_Listing_Product_Action_Request_Shipping
                 $tempDataMethod['cost_additional'] = $service->getSource($this->getMagentoProduct())
                                                              ->getCostAdditional();
 
+                $pcntLift = $service->getSource($this->getMagentoProduct())->getCostPercentageLift();
+                if ($pcntLift > 1) {
+                    $tempDataMethod['cost'] = number_format($tempDataMethod['cost'] * (1+($pcntLift/100)), 2);
+                    $tempDataMethod['cost_additional'] = number_format($tempDataMethod['cost_additional'] * (1+($pcntLift/100)), 2);
+                }
+
                 if (!$this->getShippingTemplate()->isLocalShippingRateTableEnabled() &&
                     in_array($this->getShippingTemplate()->getMarketplaceId(), array(
                         Ess_M2ePro_Helper_Component_Ebay::MARKETPLACE_US,
@@ -254,6 +260,9 @@ class Ess_M2ePro_Model_Ebay_Listing_Product_Action_Request_Shipping
 
                     $tempDataMethod['cost_surcharge'] = $service->getSource($this->getMagentoProduct())
                                                                 ->getCostSurcharge();
+                    if ($pcntLift > 1) {
+			    $tempDataMethod['cost_surcharge']  = number_format($tempDataMethod['cost_surcharge'] * (1+($pcntLift/100)),2);
+                    }
                 }
             }
 
@@ -338,6 +347,13 @@ class Ess_M2ePro_Model_Ebay_Listing_Product_Action_Request_Shipping
 
                 $tempDataMethod['cost_additional'] = $service->getSource($this->getMagentoProduct())
                                                              ->getCostAdditional();
+
+                $pcntLift = $service->getSource($this->getMagentoProduct())->getCostPercentageLift();
+                if ($pcntLift > 1) {
+                    $tempDataMethod['cost'] = number_format($tempDataMethod['cost'] * (1+($pcntLift/100)), 2);
+                    $tempDataMethod['cost_additional'] = number_format($tempDataMethod['cost_additional'] * (1+($pcntLift/100)), 2);
+                }
+
             }
 
             $services[] = $tempDataMethod;

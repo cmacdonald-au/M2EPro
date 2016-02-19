@@ -699,6 +699,12 @@ class Ess_M2ePro_Block_Adminhtml_Ebay_Listing_Preview extends Mage_Adminhtml_Blo
 
                 $tempDataMethod['cost_additional'] = $service->getSource($this->ebayListingProduct->getMagentoProduct())
                     ->getCostAdditional();
+
+                $pcntLift = $service->getSource($this->ebayListingProduct->getMagentoProduct())->getCostPercentageLift();
+                if ($pcntLift > 1) {
+                    $tempDataMethod['cost'] = number_format($tempDataMethod['cost'] * (1+($pcntLift/100)), 2);
+                    $tempDataMethod['cost_additional'] = number_format($tempDataMethod['cost_additional'] * (1+($pcntLift/100)), 2);
+                }
             }
 
             if ($this->ebayListingProduct->getShippingTemplate()->isLocalShippingCalculatedEnabled()) {
@@ -735,6 +741,12 @@ class Ess_M2ePro_Block_Adminhtml_Ebay_Listing_Preview extends Mage_Adminhtml_Blo
 
                 $tempDataMethod['cost_additional'] = $service->getSource($this->ebayListingProduct->getMagentoProduct())
                     ->getCostAdditional();
+
+                $pcntLift = $service->getSource($this->ebayListingProduct->getMagentoProduct())->getCostPercentageLift();
+                if ($pcntLift > 1) {
+                    $tempDataMethod['cost'] = number_format($tempDataMethod['cost'] * (1+($pcntLift/100)), 2);
+                    $tempDataMethod['cost_additional'] = number_format($tempDataMethod['cost_additional'] * (1+($pcntLift/100)), 2);
+                }
             }
 
             $services[] = $tempDataMethod;

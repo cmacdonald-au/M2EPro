@@ -1286,6 +1286,7 @@ EbayTemplateShippingHandler = Class.create(CommonHandler, {
                 }
             }
 
+            row.down('.shipping-pcntlift').value = service.cost_percentage_lift;
             row.down('.shipping-priority').value = service.priority;
             row.down('.cost-mode').simulate('change');
             row.down('.shipping-service').simulate('change');
