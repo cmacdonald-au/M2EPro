@@ -1838,6 +1838,7 @@ CREATE TABLE `m2epro_ebay_template_shipping_service` (
   `cost_value` VARCHAR(255) NOT NULL,
   `cost_additional_value` VARCHAR(255) NOT NULL,
   `cost_surcharge_value` VARCHAR(255) NOT NULL,
+  `cost_percentage_lift` smallint(5) DEFAULT NULL,
   `locations` TEXT NOT NULL,
   `priority` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
