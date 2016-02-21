@@ -1,0 +1,312 @@
+From 9159c4176951a06d09b903453d54e56fe137c20a Mon Sep 17 00:00:00 2001
+From: vagriance <vagriance@mag-colin.local>
+Date: Sat, 20 Feb 2016 05:33:35 +1100
+Subject: [PATCH] backporting shipping percentage lift
+
+---
+ .../Block/Adminhtml/Ebay/Listing/Preview.php       | 14 ++++++++++++-
+ .../Ebay/Template/Shipping/Edit/Form/Data.php      |  2 +-
+ .../Listing/Product/Action/Request/Shipping.php    | 18 +++++++++++++++-
+ app/code/community/Ess/M2ePro/Model/Ebay/Order.php |  2 +-
+ .../Model/Ebay/Template/Shipping/Builder.php       |  7 ++++++-
+ .../Model/Ebay/Template/Shipping/Service.php       |  7 ++++++-
+ .../Ebay/Template/Shipping/Service/Source.php      | 24 +++++++++++++++++++++-
+ .../M2ePro/ebay/template/shipping/form/data.phtml  | 15 +++++++++-----
+ js/M2ePro/Ebay/Template/ShippingHandler.js         |  3 ++-
+ 9 files changed, 79 insertions(+), 13 deletions(-)
+
+diff --git a/app/code/community/Ess/M2ePro/Block/Adminhtml/Ebay/Listing/Preview.php b/app/code/community/Ess/M2ePro/Block/Adminhtml/Ebay/Listing/Preview.php
+index 0a98b9b..e9752bc 100644
+--- a/app/code/community/Ess/M2ePro/Block/Adminhtml/Ebay/Listing/Preview.php
++++ b/app/code/community/Ess/M2ePro/Block/Adminhtml/Ebay/Listing/Preview.php
+@@ -699,6 +699,12 @@ class Ess_M2ePro_Block_Adminhtml_Ebay_Listing_Preview extends Mage_Adminhtml_Blo
+ 
+                 $tempDataMethod['cost_additional'] = $service->getSource($this->ebayListingProduct->getMagentoProduct())
+                     ->getCostAdditional();
++
++                $pcntLift = $service->getSource($this->ebayListingProduct->getMagentoProduct())->getCostPercentageLift();
++                if ($pcntLift > 1) {
++                    $tempDataMethod['cost'] = number_format($tempDataMethod['cost'] * (1+($pcntLift/100)), 2);
++                    $tempDataMethod['cost_additional'] = number_format($tempDataMethod['cost_additional'] * (1+($pcntLift/100)), 2);
++                }
+             }
+ 
+             if ($this->ebayListingProduct->getShippingTemplate()->isLocalShippingCalculatedEnabled()) {
+@@ -735,6 +741,12 @@ class Ess_M2ePro_Block_Adminhtml_Ebay_Listing_Preview extends Mage_Adminhtml_Blo
+ 
+                 $tempDataMethod['cost_additional'] = $service->getSource($this->ebayListingProduct->getMagentoProduct())
+                     ->getCostAdditional();
++
++                $pcntLift = $service->getSource($this->ebayListingProduct->getMagentoProduct())->getCostPercentageLift();
++                if ($pcntLift > 1) {
++                    $tempDataMethod['cost'] = number_format($tempDataMethod['cost'] * (1+($pcntLift/100)), 2);
++                    $tempDataMethod['cost_additional'] = number_format($tempDataMethod['cost_additional'] * (1+($pcntLift/100)), 2);
++                }
+             }
+ 
+             $services[] = $tempDataMethod;
+@@ -853,4 +865,4 @@ class Ess_M2ePro_Block_Adminhtml_Ebay_Listing_Preview extends Mage_Adminhtml_Blo
+ 
+         return $returnPolicyTitles;
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/app/code/community/Ess/M2ePro/Block/Adminhtml/Ebay/Template/Shipping/Edit/Form/Data.php b/app/code/community/Ess/M2ePro/Block/Adminhtml/Ebay/Template/Shipping/Edit/Form/Data.php
+index 0e9210d..e555e64 100644
+--- a/app/code/community/Ess/M2ePro/Block/Adminhtml/Ebay/Template/Shipping/Edit/Form/Data.php
++++ b/app/code/community/Ess/M2ePro/Block/Adminhtml/Ebay/Template/Shipping/Edit/Form/Data.php
+@@ -639,4 +639,4 @@ class Ess_M2ePro_Block_Adminhtml_Ebay_Template_Shipping_Edit_Form_Data extends M
+     }
+ 
+     //########################################
+-}
+\ No newline at end of file
++}
+diff --git a/app/code/community/Ess/M2ePro/Model/Ebay/Listing/Product/Action/Request/Shipping.php b/app/code/community/Ess/M2ePro/Model/Ebay/Listing/Product/Action/Request/Shipping.php
+index cb7058c..058ca4b 100644
+--- a/app/code/community/Ess/M2ePro/Model/Ebay/Listing/Product/Action/Request/Shipping.php
++++ b/app/code/community/Ess/M2ePro/Model/Ebay/Listing/Product/Action/Request/Shipping.php
+@@ -246,6 +246,12 @@ class Ess_M2ePro_Model_Ebay_Listing_Product_Action_Request_Shipping
+                 $tempDataMethod['cost_additional'] = $service->getSource($this->getMagentoProduct())
+                                                              ->getCostAdditional();
+ 
++                $pcntLift = $service->getSource($this->getMagentoProduct())->getCostPercentageLift();
++                if ($pcntLift > 1) {
++                    $tempDataMethod['cost'] = number_format($tempDataMethod['cost'] * (1+($pcntLift/100)), 2);
++                    $tempDataMethod['cost_additional'] = number_format($tempDataMethod['cost_additional'] * (1+($pcntLift/100)), 2);
++                }
++
+                 if (!$this->getShippingTemplate()->isLocalShippingRateTableEnabled() &&
+                     in_array($this->getShippingTemplate()->getMarketplaceId(), array(
+                         Ess_M2ePro_Helper_Component_Ebay::MARKETPLACE_US,
+@@ -254,6 +260,9 @@ class Ess_M2ePro_Model_Ebay_Listing_Product_Action_Request_Shipping
+ 
+                     $tempDataMethod['cost_surcharge'] = $service->getSource($this->getMagentoProduct())
+                                                                 ->getCostSurcharge();
++                    if ($pcntLift > 1) {
++			    $tempDataMethod['cost_surcharge']  = number_format($tempDataMethod['cost_surcharge'] * (1+($pcntLift/100)),2);
++                    }
+                 }
+             }
+ 
+@@ -338,6 +347,13 @@ class Ess_M2ePro_Model_Ebay_Listing_Product_Action_Request_Shipping
+ 
+                 $tempDataMethod['cost_additional'] = $service->getSource($this->getMagentoProduct())
+                                                              ->getCostAdditional();
++
++                $pcntLift = $service->getSource($this->getMagentoProduct())->getCostPercentageLift();
++                if ($pcntLift > 1) {
++                    $tempDataMethod['cost'] = number_format($tempDataMethod['cost'] * (1+($pcntLift/100)), 2);
++                    $tempDataMethod['cost_additional'] = number_format($tempDataMethod['cost_additional'] * (1+($pcntLift/100)), 2);
++                }
++
+             }
+ 
+             $services[] = $tempDataMethod;
+@@ -416,4 +432,4 @@ class Ess_M2ePro_Model_Ebay_Listing_Product_Action_Request_Shipping
+     }
+ 
+     //########################################
+-}
+\ No newline at end of file
++}
+diff --git a/app/code/community/Ess/M2ePro/Model/Ebay/Order.php b/app/code/community/Ess/M2ePro/Model/Ebay/Order.php
+index 10a0480..2f70c31 100644
+--- a/app/code/community/Ess/M2ePro/Model/Ebay/Order.php
++++ b/app/code/community/Ess/M2ePro/Model/Ebay/Order.php
+@@ -972,4 +972,4 @@ class Ess_M2ePro_Model_Ebay_Order extends Ess_M2ePro_Model_Component_Child_Ebay_
+     }
+ 
+     //########################################
+-}
+\ No newline at end of file
++}
+diff --git a/app/code/community/Ess/M2ePro/Model/Ebay/Template/Shipping/Builder.php b/app/code/community/Ess/M2ePro/Model/Ebay/Template/Shipping/Builder.php
+index 3810611..d9ba8ca 100644
+--- a/app/code/community/Ess/M2ePro/Model/Ebay/Template/Shipping/Builder.php
++++ b/app/code/community/Ess/M2ePro/Model/Ebay/Template/Shipping/Builder.php
+@@ -259,6 +259,10 @@ class Ess_M2ePro_Model_Ebay_Template_Shipping_Builder
+             unset($data['shipping_cost_value']['%i%']);
+         }
+ 
++        if (isset($data['shipping_cost_percentage_lift']['%i%'])) {
++            unset($data['shipping_cost_percentage_lift']['%i%']);
++        }
++
+         if (isset($data['shipping_cost_surcharge_value']['%i%'])) {
+             unset($data['shipping_cost_surcharge_value']['%i%']);
+         }
+@@ -328,6 +332,7 @@ class Ess_M2ePro_Model_Ebay_Template_Shipping_Builder
+                 'shipping_type'         => $shippingType,
+                 'cost_additional_value' => $costAdditional,
+                 'cost_surcharge_value'  => $costSurcharge,
++                'cost_percentage_lift'  => $data['shipping_cost_percentage_lift'][$i],
+                 'priority'              => $data['shipping_priority'][$i],
+                 'locations'             => json_encode($locations)
+             );
+@@ -358,4 +363,4 @@ class Ess_M2ePro_Model_Ebay_Template_Shipping_Builder
+     }
+ 
+     //########################################
+-}
+\ No newline at end of file
++}
+diff --git a/app/code/community/Ess/M2ePro/Model/Ebay/Template/Shipping/Service.php b/app/code/community/Ess/M2ePro/Model/Ebay/Template/Shipping/Service.php
+index 19e3c08..4432ee5 100644
+--- a/app/code/community/Ess/M2ePro/Model/Ebay/Template/Shipping/Service.php
++++ b/app/code/community/Ess/M2ePro/Model/Ebay/Template/Shipping/Service.php
+@@ -186,6 +186,11 @@ class Ess_M2ePro_Model_Ebay_Template_Shipping_Service extends Ess_M2ePro_Model_C
+ 
+     //########################################
+ 
++    public function getCostPercentageLiftValue()
++    {
++        return $this->getData('cost_percentage_lift');
++    }
++
+     public function getCostValue()
+     {
+         return $this->getData('cost_value');
+@@ -268,4 +273,4 @@ class Ess_M2ePro_Model_Ebay_Template_Shipping_Service extends Ess_M2ePro_Model_C
+     }
+ 
+     //########################################
+-}
+\ No newline at end of file
++}
+diff --git a/app/code/community/Ess/M2ePro/Model/Ebay/Template/Shipping/Service/Source.php b/app/code/community/Ess/M2ePro/Model/Ebay/Template/Shipping/Service/Source.php
+index a976706..2d290bc 100644
+--- a/app/code/community/Ess/M2ePro/Model/Ebay/Template/Shipping/Service/Source.php
++++ b/app/code/community/Ess/M2ePro/Model/Ebay/Template/Shipping/Service/Source.php
+@@ -115,6 +115,28 @@ class Ess_M2ePro_Model_Ebay_Template_Shipping_Service_Source
+     /**
+      * @return float
+      */
++    public function getCostPercentageLift()
++    {
++        $result = 0;
++
++        switch ($this->getShippingServiceTemplate()->getCostMode()) {
++            case Ess_M2ePro_Model_Ebay_Template_Shipping_Service::COST_MODE_FREE:
++                $result = 0;
++                break;
++            case Ess_M2ePro_Model_Ebay_Template_Shipping_Service::COST_MODE_CUSTOM_VALUE:
++            case Ess_M2ePro_Model_Ebay_Template_Shipping_Service::COST_MODE_CUSTOM_ATTRIBUTE:
++                $result = $this->getShippingServiceTemplate()->getCostPercentageLift();
++                break;
++        }
++
++        is_string($result) && $result = str_replace(',','.',$result);
++
++        return round((float)$result,2);
++    }
++
++    /**
++     * @return float
++     */
+     public function getCostSurcharge()
+     {
+         $result = 0;
+@@ -139,4 +161,4 @@ class Ess_M2ePro_Model_Ebay_Template_Shipping_Service_Source
+     }
+ 
+     //########################################
+-}
+\ No newline at end of file
++}
+diff --git a/app/design/adminhtml/default/default/template/M2ePro/ebay/template/shipping/form/data.phtml b/app/design/adminhtml/default/default/template/M2ePro/ebay/template/shipping/form/data.phtml
+index 76208af..696b5ec 100644
+--- a/app/design/adminhtml/default/default/template/M2ePro/ebay/template/shipping/form/data.phtml
++++ b/app/design/adminhtml/default/default/template/M2ePro/ebay/template/shipping/form/data.phtml
+@@ -221,7 +221,7 @@
+         width: 200px;
+     }
+ 
+-    .shipping-priority {
++    .shipping-priority, .shipping-pcntlift {
+         text-align: right;
+     }
+     .shipping-cost-additional, .shipping-cost-surcharge {
+@@ -515,6 +515,7 @@
+                                     <th style="width: 130px"><?php echo Mage::helper('M2ePro')->__('Mode'); ?></th>
+                                     <th style="width: 155px"><?php echo Mage::helper('M2ePro')->__('Cost'); ?><span class="required">*</span></th>
+                                     <th style="width: 155px"><?php echo Mage::helper('M2ePro')->__('Additional Cost'); ?><span class="required">*</span></th>
++                                    <th><?php echo Mage::helper('M2ePro')->__('Lift %'); ?></th>
+                                     <th><?php echo Mage::helper('M2ePro')->__('Currency'); ?></th>
+                                     <th><?php echo Mage::helper('M2ePro')->__('Priority'); ?></th>
+                                     <th class="type-butt last">&nbsp;</th>
+@@ -525,7 +526,7 @@
+                             </tbody>
+                             <tfoot>
+                                 <tr>
+-                                    <td colspan="20" class="a-right"><?php echo $this->getChild('add_local_shipping_method_button')->setData('label', Mage::helper('M2ePro')->__('Add Method'))->toHtml(); ?></td>
++                                    <td colspan="21" class="a-right"><?php echo $this->getChild('add_local_shipping_method_button')->setData('label', Mage::helper('M2ePro')->__('Add Method'))->toHtml(); ?></td>
+                                 </tr>
+                             </tfoot>
+                         </table>
+@@ -913,6 +914,7 @@
+                                     <th style="width: 130px;"><?php echo Mage::helper('M2ePro')->__('Mode'); ?></th>
+                                     <th style="width: 155px;"><?php echo Mage::helper('M2ePro')->__('Cost'); ?><span class="required">*</span></th>
+                                     <th style="width: 155px;"><?php echo Mage::helper('M2ePro')->__('Additional Cost'); ?><span class="required">*</span></th>
++                                    <th><?php echo Mage::helper('M2ePro')->__('Lift %'); ?></th>
+                                     <th><?php echo Mage::helper('M2ePro')->__('Currency'); ?></th>
+                                     <th><?php echo Mage::helper('M2ePro')->__('Priority'); ?></th>
+                                     <th class="type-butt last">&nbsp;</th>
+@@ -923,7 +925,7 @@
+                             </tbody>
+                             <tfoot>
+                                 <tr>
+-                                    <td colspan="20" class="a-right"><?php echo $this->getChild('add_international_shipping_method_button')->setData('label', Mage::helper('M2ePro')->__('Add Method'))->toHtml(); ?></td>
++                                    <td colspan="21" class="a-right"><?php echo $this->getChild('add_international_shipping_method_button')->setData('label', Mage::helper('M2ePro')->__('Add Method'))->toHtml(); ?></td>
+                                 </tr>
+                             </tfoot>
+                         </table>
+@@ -1356,6 +1358,9 @@
+                 </span>
+             </td>
+             <td style="text-align: center;">
++                <input style="width: 35px" name="shipping[shipping_cost_percentage_lift][%i%]" type="text" class="shipping-pcntlift input-text" />
++            </td>
++            <td style="text-align: center;">
+                 <?php echo $marketplaceData['currency'] ?>
+             </td>
+             <td style="text-align: center;">
+@@ -1375,7 +1380,7 @@
+     <tbody>
+ 
+         <tr id="shipping_variant_locations_%i%_tr" class="shipping-variant">
+-            <td colspan="5">
++            <td colspan="6">
+                 <!-- locations will be rendered here -->
+             </td>
+         </tr>
+@@ -1507,4 +1512,4 @@
+         </div>
+ 
+     </div>
+-</div>
+\ No newline at end of file
++</div>
+diff --git a/js/M2ePro/Ebay/Template/ShippingHandler.js b/js/M2ePro/Ebay/Template/ShippingHandler.js
+index bee57b3..12c66f8 100644
+--- a/js/M2ePro/Ebay/Template/ShippingHandler.js
++++ b/js/M2ePro/Ebay/Template/ShippingHandler.js
+@@ -1286,6 +1286,7 @@ EbayTemplateShippingHandler = Class.create(CommonHandler, {
+                 }
+             }
+ 
++            row.down('.shipping-pcntlift').value = service.cost_percentage_lift;
+             row.down('.shipping-priority').value = service.priority;
+             row.down('.cost-mode').simulate('change');
+             row.down('.shipping-service').simulate('change');
+@@ -1913,4 +1914,4 @@ EbayTemplateShippingHandler = Class.create(CommonHandler, {
+     }
+ 
+     // ---------------------------------------
+-});
+\ No newline at end of file
++});
+-- 
+2.3.2 (Apple Git-55)
+

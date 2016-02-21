@@ -4,6 +4,7 @@ This is a custom mod from the mainline M2EPro releases, sourced from the "offici
 https://www.magentocommerce.com/magento-connect/ebay-magento-integration-order-import-and-stock-level-synchronization-also-supports-amazon-rakuten.html
 
 It does not follow the standard M2E release cycles.
+`6.4.1.1.patch` contains the changes to use against the release version if you don't want to track this repo.
 
 # Current version #
 6.4.1.1 
